@@ -1,30 +1,24 @@
 valorAbsoluto :: Float -> Float
-valorAbsoluto x = abs x
+valorAbsoluto = abs
 
 bisiesto :: Int -> Bool
-bisiesto b = (mod b 4) == 0
+bisiesto b = mod b 4 == 0
 
 factorial :: Int -> Int
 factorial n
     | n == 0 = 1
     | n > 0 = n * factorial (n - 1)
-    | otherwise = (-1)
+    | otherwise = -1
 
-
-data Maybe a = Nothing | Just a
-data Either a b = Left a | Right b
-
-{-}
 inverso :: Float -> Maybe Float
 inverso 0 = Nothing
 inverso a = Just (1 / a)
 
-aEntero :: Either Int Bool -> Int 
-aEntero a
-    | a == True = 1
-    | b == False = 0
-    | otherwise = a
--}
+aEntero :: Either Int Bool -> Int
+aEntero (Left n)  = n
+aEntero (Right b)
+    | b = 1
+    | otherwise = 0
 
 quitarLetra :: Char -> String -> String
 quitarLetra a [] = []
@@ -48,27 +42,37 @@ todosIguales [] = True
 todosIguales [a] = True
 todosIguales (a: xa) = todosIgualesA a xa
 
+longitud :: [Float] -> Float
+longitud [] = 0
+longitud (_:xs) = 1 + longitud xs
+
+sumaTotal :: [Float] -> Float
+sumaTotal [] = 0
+sumaTotal (x: xs) = sumaTotal xs + x
+
+promedio :: [Float] -> Float
+promedio [] = 0
+promedio x = sumaTotal x / longitud x
+
+difPromedioCalc :: [Float] -> Float -> [Float]
+difPromedioCalc [] _ = []
+difPromedioCalc (x:xs) p = (x - p):difPromedioCalc xs p
+
 difPromedio :: [Float] -> [Float]
-difPromedio xs = difPromedioRec xs 0 0
+difPromedio [] = []
+difPromedio a = difPromedioCalc a (promedio a)
 
-difPromedioRec :: [Float] -> Float -> Float -> [Float]
-difPromedioRec [] _ _ = []
-difPromedioRec (x:xs) total count = 
-    let promedio = total / count
-    in (x - promedio) : difPromedioRec xs (total + x) (count + 1)
-
-
-{-
-data AB a = Nil | Bin (AB a) a (AB a)
+data AB a = Nil | Bin (AB a) a (AB a) deriving (Show)
 
 vacioAB :: AB a -> Bool
-vacioAB a  
-    == Nil = True
-    | otherwise = False
+vacioAB Nil = True
+vacioAB _ = False
 
+negacionAB :: AB Bool -> AB Bool
+negacionAB Nil = Nil
+negacionAB (Bin l root r) = Bin (negacionAB l) (not root) (negacionAB r)
 
-definir las siguientes funciones:
-b. negacionAB :: AB Bool → AB Bool que dado un árbol de booleanos construye otro formado por la negación
-de cada uno de los nodos.
-c. productoAB :: AB Int → Int que calcula el producto de todos los nodos del árbol
--}
+productoAB :: AB Int -> Int
+productoAB Nil = 1
+productoAB (Bin l root r) = root * productoAB l * productoAB r
+
