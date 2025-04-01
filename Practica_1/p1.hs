@@ -1,7 +1,5 @@
 {- Ejercicio 3 -}
 {- Redefinir usando foldr las funciones sum, elem, (++), filter y map. -}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Redundant where" #-}
 sum' :: [Int] -> Int
 sum' = foldr (+) 0
 
@@ -131,9 +129,38 @@ insertarOrdenado a = recr (\x xs r -> if a <= x then a : x : xs else x : r) []
 listas finitas e infinitas. -}
 {- i. mapPares, una versión de map que toma una función currificada de dos argumentos y una lista de pares
 de valores, y devuelve la lista de aplicaciones de la función a cada par. Pista: recordar curry y uncurry. -}
-
+mapPares :: (a -> b -> c) -> [(a, b)] -> [c]
+--mapPares f = map (\(x1,x2) -> f x1 x2)
+mapPares f = map (uncurry f )
 
 {- ii. armarPares, que dadas dos listas arma una lista de pares que contiene, en cada posición, el elemento
 correspondiente a esa posición en cada una de las listas. Si una de las listas es más larga que la otra,
 ignorar los elementos que sobran (el resultado tendrá la longitud de la lista más corta). Esta función en
 Haskell se llama zip. Pista: aprovechar la currificación y utilizar evaluación parcial. -}
+armarPares :: [a] -> [b] -> [(a, b)]
+armarPares x y  = f x y
+    where
+        f :: [a] -> [b] -> [(a,b)]
+        f [x] (y:ys) = [(x,y)]
+        f (x:xs) [y] = [(x,y)]
+        f (x:xs) (y:ys) = (x,y) : f xs ys
+
+armarPares' :: [a] -> [b] -> [(a, b)]
+armarPares' xs ys = map (uncurry (,)) (aux xs ys)
+  where
+    aux (x:xs) (y:ys) = (x, y) : aux xs ys
+    aux _ _ = []
+
+{- Ejercicio 8 -}
+{- i. Escribir la función sumaMat, que representa la suma de matrices, usando zipWith. Representaremos una matriz como 
+la lista de sus filas. Esto quiere decir que cada matriz será una lista finita de listas finitas, todas de la misma 
+longitud, con elementos enteros. Recordamos que la suma de matrices se define como la suma celda a celda. 
+Asumir que las dos matrices a sumar están bien formadas y tienen las mismas dimensiones.
+sumaMat :: [[Int]] -> [[Int]] -> [[Int]] -}
+sumaMat :: [[Int]] -> [[Int]] -> [[Int]]
+sumaMat = zipWith (\x y -> zipWith (+) x y)
+
+{- ii. Escribir la función trasponer, que, dada una matriz como las del ítem i, devuelva su traspuesta. Es decir,
+en la posición i, j del resultado está el contenido de la posición j, i de la matriz original. Notar que si la
+entrada es una lista de N listas, todas de longitud M , la salida debe tener M listas, todas de longitud N .
+trasponer :: [[Int]] -> [[Int]] -}
