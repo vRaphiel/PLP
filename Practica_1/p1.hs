@@ -164,3 +164,212 @@ sumaMat = zipWith (\x y -> zipWith (+) x y)
 en la posición i, j del resultado está el contenido de la posición j, i de la matriz original. Notar que si la
 entrada es una lista de N listas, todas de longitud M , la salida debe tener M listas, todas de longitud N .
 trasponer :: [[Int]] -> [[Int]] -}
+
+{- Ejercicio 10 -}
+{- Definir la función genLista :: a -> (a -> a) -> Integer -> [a], que genera una lista de una cantidad dada de 
+elementos, a partir de un elemento inicial y de una función de incremento entre los elementos de la lista.
+Dicha función de incremento, dado un elemento de la lista, devuelve el elemento siguiente. -}
+genLista :: a -> (a -> a) -> Integer -> [a]
+genLista _ _ 0 = []
+genLista x f n = x : genLista (f x) f (n - 1)
+
+{- Usando genLista, definir la función desdeHasta, que dado un par de números (el primero menor que el segundo), 
+devuelve una lista de números consecutivos desde el primero hasta el segundo. -}
+desdeHasta :: Integer -> Integer -> [Integer]
+desdeHasta x y = genLista x (+1) (y - x + 1)
+
+{- Ejercicio 12 -}
+data AB a = Nil | BinAB (AB a) a (AB a)
+
+arbolUno = BinAB (BinAB Nil 1 Nil) 2 (BinAB Nil 3 (BinAB Nil 4 Nil))
+arbolDos = BinAB (BinAB Nil 4 Nil) 2 (BinAB Nil 3 (BinAB Nil 4 Nil))
+arbolTres = BinAB (BinAB (BinAB Nil 1 (BinAB Nil 2 Nil)) 4 Nil) 2 (BinAB (BinAB Nil 4 Nil) 3 (BinAB Nil 4 Nil))
+
+{- Usando recursión explícita, definir los esquemas de recursión estructural (foldAB) y primitiva (recAB), 
+y dar sus tipos. -}
+foldAB ::  b -> (b -> a -> b -> b) -> AB a -> b
+foldAB cNil cBin t = case t of
+                        Nil -> cNil
+                        BinAB i r d -> cBin (foldAB cNil cBin i) r (foldAB cNil cBin d)
+
+foldAB1 :: (b -> a -> b -> b) -> AB a -> b
+foldAB1 cBin (BinAB i r d) = cBin (foldAB1 cBin i) r (foldAB1 cBin d)
+
+-- Caso base. Funcion que tiene como recursivo los subarboles enteros, los resultados de los nodos, la raiz.
+recAB :: b -> (AB a -> b -> a -> b -> AB a -> b) -> AB a -> b
+recAB cNil cBin Nil = cNil
+recAB cNil cBin (BinAB i r d) = cBin i (recAB cNil cBin i) r (recAB cNil cBin d) d
+
+{- Definir las funciones esNil, altura y cantNodos (para esNil puede utilizarse case en lugar de foldAB o recAB). -}
+esNil :: AB a -> Bool
+esNil Nil = True
+esNil _ = False
+
+altura :: AB a -> Integer
+altura = foldAB 0 (\i _ d -> 1 + max i d)
+
+cantNodos :: AB a -> Integer
+cantNodos = foldAB 0 (\i r d -> 1 + i + d)
+
+{- Definir la función mejorSegún :: (a -> a -> Bool) -> AB a -> a, análoga a la del ejercicio 3, para árboles.
+Se recomienda definir una función auxiliar para comparar la raíz con un posible resultado de la recursión para un 
+árbol que puede o no ser Nil. -}
+mejorSegunAB :: (a -> a -> Bool) -> AB a -> a
+mejorSegunAB f Nil = error "No se puede aplicar a un árbol vacío"
+mejorSegunAB f (BinAB Nil r Nil) = r
+mejorSegunAB f (BinAB Nil r d) = if f r (mejorSegunAB f d) then r else mejorSegunAB f d
+mejorSegunAB f (BinAB i r Nil) = if f r (mejorSegunAB f i) then r else mejorSegunAB f i
+mejorSegunAB f (BinAB i r d) = if compararResultadoAB f r (mejorResultadoIterativo f i d) then r else mejorResultadoIterativo f i d
+    where
+        mejorResultadoIterativo :: (a -> a -> Bool) -> AB a -> AB a -> a
+        mejorResultadoIterativo f i d = if f (mejorSegunAB f i) (mejorSegunAB f d) then mejorSegunAB f i else mejorSegunAB f d
+
+        compararResultadoAB :: (a -> a -> Bool) -> a -> a -> Bool
+        compararResultadoAB f = f
+
+
+{- Definir la función esABB :: Ord a => AB a -> Bool que chequea si un árbol es un árbol binario de búsqueda.
+Recordar que, en un árbol binario de búsqueda, el valor de un nodo es mayor o igual que los valores que aparecen en el 
+subárbol izquierdo y es estrictamente menor que los valores que aparecen en el subárbol derecho. -}
+
+{- esABB debe ser primitiva. Ya que se necesita ver el resto del arbol en cada paso mas el paso actual -}
+esABB :: Ord a => AB a -> Bool
+esABB = recAB True (\abi i r d abd -> esSubArbIzqABB abi r && esSubArbDerABB abd r)
+    where
+        esSubArbIzqABB :: Ord a => AB a -> a -> Bool
+        esSubArbIzqABB Nil _ = True
+        esSubArbIzqABB (BinAB i r' d) a = (r' < a) && (esSubArbIzqABB i r' && esSubArbDerABB d r')
+
+        esSubArbDerABB :: Ord a => AB a -> a -> Bool
+        esSubArbDerABB Nil _ = True
+        esSubArbDerABB (BinAB i r' d) a = (r' > a) && (esSubArbIzqABB i r' && esSubArbDerABB d r')
+
+{- Ejercicio 13 - Sigue del Ejercicio 12 -}
+{- Definir las funciones ramas (caminos desde la raíz hasta las hojas), cantHojas y espejo. -}
+ramas :: AB a -> [[a]]
+ramas = foldAB [] (\i r d -> if null i && null d then [[r]] else map (r:) (i ++ d))
+
+cantHojas :: AB a -> Integer
+cantHojas = foldAB 0 (\i r d -> if i == 0 && d == 0 then 1 else i + d)
+
+-- espejo
+espejo :: AB a -> AB a
+espejo = foldAB Nil (\i r d -> BinAB (espejo d) r (espejo i))
+
+{- Definir la función mismaEstructura :: AB a -> AB b -> Bool que, dados dos árboles, indica si éstos tienen la misma 
+forma, independientemente del contenido de sus nodos. Pista: usar evaluación parcial y recordar el ejercicio 7 -}
+mismaEstructura :: AB a -> AB b -> Bool
+mismaEstructura Nil Nil = True
+mismaEstructura (BinAB i1 _ d1) (BinAB i2 _ d2) = mismaEstructura i1 i2 && mismaEstructura d1 d2
+mismaEstructura _ _ = False
+
+{- Ejercicio 14 -}
+{- Se desea modelar los árboles con información en las hojas (y sólo en ellas). Se introduce el siguiente tipo: -}
+data AIH a = Hoja a | BinAIH (AIH a) (AIH a)
+arbolAIHUno = BinAIH (Hoja 1) (BinAIH (Hoja 2) (Hoja 3))
+arbolAIHDos :: AIH Integer
+arbolAIHDos = BinAIH (BinAIH (BinAIH (BinAIH (Hoja 1) (Hoja 2)) (Hoja 3)) (Hoja 4)) (Hoja 5)
+{- Definir el esquema de recursión estructural foldAIH y dar su tipo. Por tratarse del primer esquema de
+recursión que tenemos para este tipo, se permite usar recursión explícita. -}
+foldAIH :: (a -> b) -> (b -> b -> b) -> AIH a -> b
+foldAIH cHoja cBin t = case t of
+                    Hoja i -> cHoja i
+                    BinAIH i d -> cBin (rec i) (rec d)
+    where
+        rec = foldAIH cHoja cBin
+
+{- Escribir las funciones altura :: AIH a -> Integer y tamaño :: AIH a -> Integer.
+Considerar que la altura de una hoja es 1 y el tamaño de un AIH es su cantidad de hojas. -}
+alturaAIH :: AIH a -> Integer
+alturaAIH = foldAIH (const 1) (\i d -> 1 + max i d)
+
+tamañoAIH :: AIH a -> Integer
+tamañoAIH = foldAIH (const 1) (\i d -> i + d)
+
+{- Definir la función sumaAIH :: Num a => AIH a -> a, que suma los valores de las hojas. -}
+sumaAIH :: Num a => AIH a -> a
+sumaAIH = foldAIH id (+)
+
+{- Ejercicio 16 -}
+{- Se desea representar conjuntos mediante Hashing abierto. El Hashing abierto consta de dos funciones: 
+una función de Hash, que dado un elemento devuelve un valor entero (el cual se espera que no se repita con frecuencia),
+y una tabla de Hash, que dado un número entero devuelve los elementos del conjunto a los que la función de Hash asignó 
+dicho número (es decir, la preimagen de la función de Hash para ese número). Se representarán como:
+    data HashSet a = Hash (a -> Integer) (Integer -> [a])
+Por contexto de uso, vamos a suponer que la tabla de Hash es una función total, que devuelve listas vacías para los 
+números que no corresponden a elementos del conjunto. Este es un invariante que deberá preservarse en todas las 
+funciones que devuelvan conjuntos -}
+data HashSet a = Hash (a -> Integer) (Integer -> [a])
+
+hashSetUno = agregar 1 $ agregar 2 $ agregar 1 $ vacío (flip mod 5)
+hashSetDos = agregar 3 $ agregar 1 $ agregar 2 $ agregar 1 $ vacío (flip mod 5)
+hashSetTres = Hash (\x -> x `mod` 3) (\i -> case i of
+                                          0 -> [3, 6]
+                                          1 -> [1, 4]
+                                          2 -> [2, 5])
+
+{-  vacío :: (a -> Integer) -> HashSet a, que devuelve un conjunto vacío con la función de Hash indicada. -}
+vacío :: (a -> Integer) -> HashSet a
+vacío f = Hash f (const [])
+
+{- pertenece :: Eq a => a -> HashSet a -> Bool, que indica si un elemento pertenece a un conjunto. Es decir, si se 
+encuentra en la lista obtenida en la tabla de Hash para el número correspondiente a la función de Hash del elemento.
+Por ejemplo:
+pertenece 5 $ agregar 1 $ agregar 2 $ agregar 1 $ vacío (flip mod 5) devuelve False.
+pertenece 2 $ agregar 1 $ agregar 2 $ agregar 1 $ vacío (flip mod 5) devuelve True. -}
+pertenece :: Eq a => a -> HashSet a -> Bool
+pertenece a (Hash f t) = elem a (t (f a))
+
+{- agregar :: Eq a => a -> HashSet a -> HashSet a, que agrega un elemento a un conjunto. Si el elemento ya estaba en el
+conjunto, se debe devolver el conjunto sin modificaciones. -}
+agregar :: Eq a => a -> HashSet a -> HashSet a
+agregar a (Hash f t) = if pertenece a (Hash f t) then Hash f t else Hash f (\x -> if x == f a then a : t x else t x)
+
+{- intersección :: Eq a => HashSet a -> HashSet a -> HashSet a que, dados dos conjuntos, devuelve un conjunto con la 
+misma función de Hash del primero y con los elementos que pertenecen a ambos conjuntos a la vez. -}
+intersección :: Eq a => HashSet a -> HashSet a -> HashSet a
+intersección (Hash f1 t1) (Hash f2 t2) = Hash f1 (\i -> [x | x <- t1 i, elem x (t2 i)])
+
+{- foldr1(no relacionada con los conjuntos). Dar el tipo y definir la función foldr1 para listas sin usar recursión 
+explícita, recurriendo a alguno de los esquemas de recursión conocidos. Se recomienda usar la función 
+error :: String -> a para el caso de la lista vacía -}
+foldr1HashSet :: (a -> a -> a) -> [Integer] -> HashSet a -> a
+foldr1HashSet cRec hs (Hash _ valFn) = foldr1 cRec (concatMap valFn hs)
+
+{- Ejercicio 18 -}
+paresDeNat :: [(Int, Int)]
+paresDeNat = [(x,n - x) | n <- [0..10], x <- [0..n]]
+
+{- Ejercicio 19 -}
+{- Una tripla pitagórica es una tripla (a, b, c) de enteros positivos tal que a2 + b2 = c2.
+La siguiente expresión intenta ser una definición de una lista (infinita) de triplas pitagóricas:
+pitagóricas :: [(Integer, Integer, Integer)]
+pitagóricas = [(a, b, c) | a <- [1..], b <-[1..], c <- [1..], a^2 + b^2 == c^2]
+Explicar por qué esta definición no es útil. Dar una definición mejor. 
+
+No es util ya que se esta dando un conjunto infinito de valores y, como a es infinito, este nunca cambia. Lo mismo con b,
+con b se queda fijo en un valor y como c es infinito este sigue creciendo y ni a ni b van a cambiar.
+Otro enfoque podría ser un plano tridimencional de pares de Nat, que sean triplas
+-}
+pitagóricas :: [(Integer, Integer, Integer)]
+pitagóricas = [ (a, b, c) | c <- [1..10], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2 ]
+
+{- Ejercicio 20 -}
+{- Escribir la función listasQueSuman :: Int -> [[Int]] que, dado un número natural n, devuelve todas las
+listas de enteros positivos (es decir, mayores o iguales que 1) cuya suma sea n. Para este ejercicio se permite
+usar recursión explícita. Pensar por qué la recursón utilizada no es estructural. (Este ejercicio no es de
+generación infinita, pero puede ser útil para otras funciones que generen listas infinitas de listas). -}
+listasQueSuman :: Int -> [[Int]]
+listasQueSuman 0 = [[]]
+listasQueSuman n = [ x:xs | x <- [1..n], xs <- listasQueSuman (n - x) ]
+
+{- Ejercicio 21 -}
+{- Definir en Haskell una lista que contenga todas las listas finitas de enteros positivos (esto es, con elementos
+mayores o iguales que 1). -}
+
+
+{- Ejercicio 22 -}
+{- Dado el tipo de datos AIH a definido en el ejercicio 14:
+a) Definir la lista (infinita) de todos los AIH cuyas hojas tienen tipo ()1. Se recomienda definir una función
+auxiliar. Para este ejercicio se permite utilizar recursión explícita.
+b) Explicar por qué la recursión utilizada en el punto a) no es estructural -}
