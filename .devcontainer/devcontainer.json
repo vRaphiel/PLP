@@ -1,0 +1,14 @@
+{
+  "name": "Haskell & SWI-Prolog",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {},
+  "postCreateCommand": "apt-get update && apt-get install -y swi-prolog haskell-platform",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "haskell.haskell",
+        "SWI-Prolog.swi-prolog"
+      ]
+    }
+  }
+}
