@@ -1,0 +1,1 @@
+invertir (Carga $ Pasajeros 1 $ Carga $ Pasajeros 2 $ Pasajeros 5 $ Locomotora)
