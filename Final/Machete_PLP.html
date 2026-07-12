@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 10mm; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 8.5pt; line-height: 1.2; }
+  h1 { font-size: 14pt; text-align: center; margin: 0 0 10px 0; border-bottom: 2px solid #333; }
+  h2 { font-size: 11pt; margin: 10px 0 5px 0; color: #d32f2f; border-bottom: 1px solid #ccc; break-after: avoid; }
+  .multicol { column-count: 2; column-gap: 5mm; }
+  .item { break-inside: avoid; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px dashed #eee; }
+  .name { font-weight: bold; color: #1976d2; font-family: Consolas, monospace; font-size: 8.5pt; }
+  .type { color: #388e3c; font-family: Consolas, monospace; font-size: 7.5pt; display: block; margin-bottom: 1px; }
+  .desc { margin: 0; color: #333; }
+  .ex { font-style: italic; color: #666; font-family: Consolas, monospace; font-size: 7.5pt; }
+  .note { background: #fff3e0; padding: 4px; border-left: 3px solid #ff9800; font-size: 8pt; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+  <h1>Machete Definitivo - Paradigmas de Programación (PLP)</h1>
+  <div class="multicol">
+
+    <h2>Haskell</h2>
+    <div class="note">Algunas funciones requieren import Data.List, Data.Maybe o Data.Ord.</div>
+    <div class="item"><span class="name">foldr</span><span class="type">Foldable t => (a -> b -> b) -> b -> t a -> b</span><p class="desc">Reduce de der a izq. <span class="ex">Ej: foldr (-) 0 [1,2,3] -- 2</span></p></div>
+    <div class="item"><span class="name">foldl</span><span class="type">Foldable t => (b -> a -> b) -> b -> t a -> b</span><p class="desc">Reduce de izq a der. <span class="ex">Ej: foldl (-) 0 [1,2,3] -- -6</span></p></div>
+    <div class="item"><span class="name">foldr1 / foldl1</span><span class="type">(a -> a -> a) -> [a] -> a</span><p class="desc">Sin caso base (falla en vacías). <span class="ex">Ej: foldl1 (*) [1,2,3] -- 6</span></p></div>
+    <div class="item"><span class="name">map</span><span class="type">(a -> b) -> [a] -> [b]</span><p class="desc">Aplica f a cada elemento. <span class="ex">Ej: map (+1) [1,2] -- [2,3]</span></p></div>
+    <div class="item"><span class="name">zipWith</span><span class="type">(a -> b -> c) -> [a] -> [b] -> [c]</span><p class="desc">Une listas con una función. <span class="ex">Ej: zipWith (+) [1] [2] -- [3]</span></p></div>
+    <div class="item"><span class="name">all / any</span><span class="type">Foldable t => (a -> Bool) -> t a -> Bool</span><p class="desc">¿Todos cumplen? / ¿Alguno? <span class="ex">Ej: any (==5) [1,5] -- True</span></p></div>
+    <div class="item"><span class="name">null</span><span class="type">Foldable t => t a -> Bool</span><p class="desc">¿Está vacía? <span class="ex">Ej: null [] -- True</span></p></div>
+    <div class="item"><span class="name">nub</span><span class="type">Eq a => [a] -> [a]</span><p class="desc">Elimina duplicados (Data.List). <span class="ex">Ej: nub [1,1,2] -- [1,2]</span></p></div>
+    <div class="item"><span class="name">sort</span><span class="type">Ord a => [a] -> [a]</span><p class="desc">Ordena de menor a mayor (List). <span class="ex">Ej: sort [3,1] -- [1,3]</span></p></div>
+    <div class="item"><span class="name">sortBy</span><span class="type">(a -> a -> Ordering) -> [a] -> [a]</span><p class="desc">Ordena con comparador. <span class="ex">Ej: sortBy (flip compare) [1,3] -- [3,1]</span></p></div>
+    <div class="item"><span class="name">mod / div</span><span class="type">Integral a => a -> a -> a</span><p class="desc">Módulo y división entera. <span class="ex">Ej: 10 `div` 3 -- 3</span></p></div>
+    <div class="item"><span class="name">odd / even</span><span class="type">Integral a => a -> Bool</span><p class="desc">¿Es impar / par? <span class="ex">Ej: odd 3 -- True</span></p></div>
+    <div class="item"><span class="name">(++)</span><span class="type">[a] -> [a] -> [a]</span><p class="desc">Concatena listas. <span class="ex">Ej: [1] ++ [2] -- [1,2]</span></p></div>
+    <div class="item"><span class="name">head / tail</span><span class="type">[a] -> a / [a] -> [a]</span><p class="desc">Primer elemento / El resto. <span class="ex">Ej: tail [1,2] -- [2]</span></p></div>
+    <div class="item"><span class="name">init / last</span><span class="type">[a] -> [a] / [a] -> a</span><p class="desc">Todo menos último / El último. <span class="ex">Ej: init [1,2] -- [1]</span></p></div>
+    <div class="item"><span class="name">length</span><span class="type">Foldable t => t a -> Int</span><p class="desc">Largo de la estructura. <span class="ex">Ej: length "PLP" -- 3</span></p></div>
+    <div class="item"><span class="name">replicate</span><span class="type">Int -> a -> [a]</span><p class="desc">Crea lista repitiendo n veces. <span class="ex">Ej: replicate 3 'a' -- "aaa"</span></p></div>
+    <div class="item"><span class="name">repeat</span><span class="type">a -> [a]</span><p class="desc">Lista infinita de 1 elemento. <span class="ex">Ej: take 2 (repeat 1) -- [1,1]</span></p></div>
+    <div class="item"><span class="name">iterate</span><span class="type">(a -> a) -> a -> [a]</span><p class="desc">Aplica f infinitamente. <span class="ex">Ej: take 3 (iterate (*2) 1) -- [1,2,4]</span></p></div>
+    <div class="item"><span class="name">filter</span><span class="type">(a -> Bool) -> [a] -> [a]</span><p class="desc">Filtra por condición. <span class="ex">Ej: filter (>0) [-1, 1] -- [1]</span></p></div>
+    <div class="item"><span class="name">take / drop</span><span class="type">Int -> [a] -> [a]</span><p class="desc">Toma/Tira n elementos. <span class="ex">Ej: drop 1 [1,2,3] -- [2,3]</span></p></div>
+    <div class="item"><span class="name">elem</span><span class="type">Eq a => a -> t a -> Bool</span><p class="desc">¿Pertenece? <span class="ex">Ej: elem 1 [1,2] -- True</span></p></div>
+    <div class="item"><span class="name">find</span><span class="type">Foldable t => (a -> Bool) -> t a -> Maybe a</span><p class="desc">Primer match (Data.List). <span class="ex">Ej: find even [1,2,3] -- Just 2</span></p></div>
+    <div class="item"><span class="name">isNothing/isJust</span><span class="type">Maybe a -> Bool</span><p class="desc">Verifica Maybe (Data.Maybe). <span class="ex">Ej: isNothing Nothing -- True</span></p></div>
+    <div class="item"><span class="name">fromJust</span><span class="type">Maybe a -> a</span><p class="desc">Extrae valor (falla si Nothing). <span class="ex">Ej: fromJust (Just 1) -- 1</span></p></div>
+    <div class="item"><span class="name">maybe</span><span class="type">b -> (a -> b) -> Maybe a -> b</span><p class="desc">Case de Maybe en 1 línea. <span class="ex">Ej: maybe 0 (+1) (Just 5) -- 6</span></p></div>
+    <div class="item"><span class="name">lookup</span><span class="type">Eq a => a -> [(a, b)] -> Maybe b</span><p class="desc">Busca valor por clave en tuplas. <span class="ex">Ej: lookup 'a' [('a',1)] -- Just 1</span></p></div>
+    <div class="item"><span class="name">reverse</span><span class="type">[a] -> [a]</span><p class="desc">Invierte lista. <span class="ex">Ej: reverse "hola" -- "aloh"</span></p></div>
+    <div class="item"><span class="name">concat</span><span class="type">Foldable t => t [a] -> [a]</span><p class="desc">Aplana 1 nivel. <span class="ex">Ej: concat [[1],[2]] -- [1,2]</span></p></div>
+    <div class="item"><span class="name">union / intersect</span><span class="type">Eq a => [a] -> [a] -> [a]</span><p class="desc">Unión/Intersección sets (List). <span class="ex">Ej: intersect [1,2] [2,3] -- [2]</span></p></div>
+    <div class="item"><span class="name">(>>=)</span><span class="type">Monad m => m a -> (a -> m b) -> m b</span><p class="desc">Bind monádico. <span class="ex">Ej: Just 1 >>= (\x -> Just (x+1))</span></p></div>
+    <div class="item"><span class="name">span</span><span class="type">(a -> Bool) -> [a] -> ([a], [a])</span><p class="desc">Corta la lista donde f da False. <span class="ex">Ej: span (<3) [1,2,3,1] -- ([1,2],[3,1])</span></p></div>
+    <div class="item"><span class="name">takeWhile / dropWhile</span><span class="type">(a -> Bool) -> [a] -> [a]</span><p class="desc">Toma/Tira mientras f de True. <span class="ex">Ej: takeWhile (<3) [1,2,3,1] -- [1,2]</span></p></div>
+    <div class="item"><span class="name">concatMap</span><span class="type">Foldable t => (a -> [b]) -> t a -> [b]</span><p class="desc">map y luego concat. <span class="ex">Ej: concatMap (\x -> [x,x]) [1] -- [1,1]</span></p></div>
+    <div class="item"><span class="name">and / or</span><span class="type">Foldable t => t Bool -> Bool</span><p class="desc">¿Todos True? / ¿Alguno True? <span class="ex">Ej: or [False, True] -- True</span></p></div>
+    <div class="item"><span class="name">sum</span><span class="type">Num a => t a -> a</span><p class="desc">Suma todos. <span class="ex">Ej: sum [1,2] -- 3</span></p></div>
+    <div class="item"><span class="name">max / min</span><span class="type">Ord a => a -> a -> a</span><p class="desc">Máximo / Mínimo de 2 args. <span class="ex">Ej: max 1 2 -- 2</span></p></div>
+    <div class="item"><span class="name">maximum / minimum</span><span class="type">Ord a => t a -> a</span><p class="desc">Max/Min de una lista. <span class="ex">Ej: maximum [1,9,2] -- 9</span></p></div>
+    <div class="item"><span class="name">maximumBy/minimumBy</span><span class="type">(a -> a -> Ordering) -> t a -> a</span><p class="desc">Max/Min custom (Data.List). <span class="ex">Ej: maximumBy (comparing length) ["a","ab"]</span></p></div>
+    <div class="item"><span class="name">(==) / (/=)</span><span class="type">Eq a => a -> a -> Bool</span><p class="desc">Igual / Distinto. <span class="ex">Ej: 1 /= 2 -- True</span></p></div>
+    <div class="item"><span class="name">compare</span><span class="type">Ord a => a -> a -> Ordering</span><p class="desc">Compara (LT, EQ, GT). <span class="ex">Ej: compare 1 2 -- LT</span></p></div>
+    <div class="item"><span class="name">comparing</span><span class="type">Ord a => (b -> a) -> b -> b -> Ordering</span><p class="desc">Proyecta y compara (Data.Ord). <span class="ex">Ej: comparing snd (1,2) (3,1) -- GT</span></p></div>
+    <div class="item"><span class="name">not</span><span class="type">Bool -> Bool</span><p class="desc">Negación lógica. <span class="ex">Ej: not True -- False</span></p></div>
+    <div class="item"><span class="name">ord / chr</span><span class="type">Char -> Int / Int -> Char</span><p class="desc">Char <-> ASCII (Data.Char). <span class="ex">Ej: ord 'A' -- 65</span></p></div>
+
+    <h2>Haskell - Magia Negra de Folds y Rec</h2>
+    <div class="note">Trucos clásicos para finales: Expresar esquemas de recursión en términos de otros.</div>
+    <div class="item"><span class="name">const</span><span class="type">a -> b -> a</span><p class="desc">Ignora el 2do argumento. <span class="ex">Ej: const 1 "x" -- 1</span></p></div>
+    <div class="item"><span class="name">foldl via foldr</span><span class="type">-</span><p class="desc">Usa foldr para armar una función acumuladora. <span class="ex">foldl f z xs = foldr (\x g a -> g (f a x)) id xs z</span></p></div>
+    <div class="item"><span class="name">foldr via foldl</span><span class="type">-</span><p class="desc">Idem anterior (crea cadena de comp). <span class="ex">foldr f z xs = foldl (\g x a -> g (f x a)) id xs z</span></p></div>
+    <div class="item"><span class="name">foldr via recr</span><span class="type">-</span><p class="desc">En recr sobra la sublista, la ignoramos. <span class="ex">foldr f z = recr (\x _ rec -> f x rec) z</span></p></div>
+    <div class="item"><span class="name">recr via foldr</span><span class="type">-</span><p class="desc">Arrastra la sublista reconstruyéndola en tupla. <span class="ex">recr f z xs = snd $ foldr (\x (ys, rec) -> (x:ys, f x ys rec)) ([], z) xs</span></p></div>
+
+    <h2>Prolog</h2>
+    <div class="note">¡Ojo! A excepción del not (\+), los metapredicados NO están permitidos para resolver parciales o finales (solo TP).</div>
+    <div class="item"><span class="name">=</span><span class="type">T1 = T2</span><p class="desc">Unifica dos términos. <span class="ex">Ej: X = 5</span></p></div>
+    <div class="item"><span class="name">sort / msort</span><span class="type">sort(+L1, -L2)</span><p class="desc">Ordena y quita rep (msort no). <span class="ex">Ej: sort([3,1,1], [1,3])</span></p></div>
+    <div class="item"><span class="name">length</span><span class="type">length(?List, ?Int)</span><p class="desc">Longitud de lista. <span class="ex">Ej: length([a,b], 2)</span></p></div>
+    <div class="item"><span class="name">nth1 / nth0</span><span class="type">nth1(?Index, ?List, ?Elem)</span><p class="desc">Elem en índice (base 1 o 0). <span class="ex">Ej: nth1(2, [a,b,c], b)</span></p></div>
+    <div class="item"><span class="name">member</span><span class="type">member(?Elem, ?List)</span><p class="desc">¿Pertenece a la lista? <span class="ex">Ej: member(X, [1,2])</span></p></div>
+    <div class="item"><span class="name">append</span><span class="type">append(?L1, ?L2, ?L3)</span><p class="desc">Concatena L1 y L2 en L3. <span class="ex">Ej: append([1], [2], [1,2])</span></p></div>
+    <div class="item"><span class="name">last</span><span class="type">last(+List, -Elem)</span><p class="desc">Último elemento. <span class="ex">Ej: last([1,2,3], 3)</span></p></div>
+    <div class="item"><span class="name">between</span><span class="type">between(+Low, +High, ?Value)</span><p class="desc">Genera/Testea en rango. <span class="ex">Ej: between(1, 3, 2)</span></p></div>
+    <div class="item"><span class="name">is_list</span><span class="type">is_list(+Term)</span><p class="desc">¿Es una lista propia? <span class="ex">Ej: is_list([1,2])</span></p></div>
+    <div class="item"><span class="name">list_to_set</span><span class="type">list_to_set(+List, -Set)</span><p class="desc">Remueve repetidos. <span class="ex">Ej: list_to_set([1,1,2], [1,2])</span></p></div>
+    <div class="item"><span class="name">is_set</span><span class="type">is_set(+Set)</span><p class="desc">¿Es conjunto válido? <span class="ex">Ej: is_set([1,2])</span></p></div>
+    <div class="item"><span class="name">union / intersection</span><span class="type">union(+S1, +S2, -S3)</span><p class="desc">Unión / Intersección de sets. <span class="ex">Ej: intersection([1,2], [2], [2])</span></p></div>
+    <div class="item"><span class="name">subset / subtract</span><span class="type">subset(+Sub, +Set)</span><p class="desc">¿Es subconj.? / Resta sets. <span class="ex">Ej: subset([1], [1,2])</span></p></div>
+    <div class="item"><span class="name">select</span><span class="type">select(?Elem, ?List1, ?List2)</span><p class="desc">Extrae 1 Elem de L1 dando L2. <span class="ex">Ej: select(2, [1,2,3], [1,3])</span></p></div>
+    <div class="item"><span class="name">delete</span><span class="type">delete(+List1, @Elem, -List2)</span><p class="desc">Borra TODAS las apariciones. <span class="ex">Ej: delete([1,2,1], 1, [2])</span></p></div>
+    <div class="item"><span class="name">reverse</span><span class="type">reverse(+List1, -List2)</span><p class="desc">Invierte lista. <span class="ex">Ej: reverse([1,2], [2,1])</span></p></div>
+    <div class="item"><span class="name">atom / number</span><span class="type">atom(+Term)</span><p class="desc">¿Es átomo/número instanciado? <span class="ex">Ej: number(5)</span></p></div>
+    <div class="item"><span class="name">numlist</span><span class="type">numlist(+Low, +High, -List)</span><p class="desc">Nros consecutivos. <span class="ex">Ej: numlist(1, 3, [1,2,3])</span></p></div>
+    <div class="item"><span class="name">sum_list</span><span class="type">sum_list(+List, -Sum)</span><p class="desc">Suma elementos. <span class="ex">Ej: sum_list([1,2], 3)</span></p></div>
+    <div class="item"><span class="name">flatten</span><span class="type">flatten(+Nested, -Flat)</span><p class="desc">Aplana listas anidadas. <span class="ex">Ej: flatten([[1],2], [1,2])</span></p></div>
+    <div class="item"><span class="name">is</span><span class="type">?Var is +Expr</span><p class="desc">Evalúa aritméticamente Expr. <span class="ex">Ej: X is 2 + 2</span></p></div>
+    <div class="item"><span class="name">=:= / =\=</span><span class="type">+Expr1 =:= +Expr2</span><p class="desc">Igualdad/Desig. aritmética. <span class="ex">Ej: 4 =:= 2+2</span></p></div>
+    <div class="item"><span class="name">== / \=</span><span class="type">@Term1 == @Term2</span><p class="desc">Igualdad estructural estricta. <span class="ex">Ej: X \= 5</span></p></div>
+    <div class="item"><span class="name">> / < / =< / >=</span><span class="type">+Expr1 > +Expr2</span><p class="desc">Comparaciones aritméticas. <span class="ex">Ej: 3 =< 5</span></p></div>
+    <div class="item"><span class="name">abs/max/min/mod/gcd</span><span class="type">+Expr</span><p class="desc">Funciones (usar en is). <span class="ex">Ej: X is max(2, 5)</span></p></div>
+    <div class="item"><span class="name">var / nonvar</span><span class="type">var(@Term)</span><p class="desc">¿Está (sin) instanciar? <span class="ex">Ej: var(X)</span></p></div>
+    <div class="item"><span class="name">ground</span><span class="type">ground(@Term)</span><p class="desc">¿No contiene variables libres? <span class="ex">Ej: ground(f(a))</span></p></div>
+    <div class="item"><span class="name">trace / notrace</span><span class="type">trace.</span><p class="desc">Inicia / Detiene modo debug. <span class="ex">Ej: trace, mi_pred(X)</span></p></div>
+    <div class="item"><span class="name">make / halt</span><span class="type">make.</span><p class="desc">Recarga código / Sale swipl. <span class="ex">Ej: halt.</span></p></div>
+    <div class="item"><span class="name">bagof / setof</span><span class="type">bagof(+T, +G, -L)</span><p class="desc">Busca T que cumplen G (setof ordena). <span class="ex">Ej: bagof(X, member(X,[1,2]), L)</span></p></div>
+    <div class="item"><span class="name">findall</span><span class="type">findall(+T, +G, -L)</span><p class="desc">Como bagof pero no falla si vacío. <span class="ex">Ej: findall(X, false, [])</span></p></div>
+    <div class="item"><span class="name">maplist</span><span class="type">maplist(:Goal, ?List)</span><p class="desc">Aplica Goal a todos. <span class="ex">Ej: maplist(>=(0), [-1,-2])</span></p></div>
+    <div class="item"><span class="name">include</span><span class="type">include(:Goal, +List1, -List2)</span><p class="desc">Equivalente a filter. <span class="ex">Ej: include(number, [a,1,b], [1])</span></p></div>
+    <div class="item"><span class="name">not / \+</span><span class="type">\+ +Goal</span><p class="desc">Negación por falla. <span class="ex">Ej: \+ member(3, [1,2])</span></p></div>
+    <div class="item"><span class="name">forall</span><span class="type">forall(+Cond, +Action)</span><p class="desc">Para todo Cond, vale Action. <span class="ex">Ej: forall(member(X,[1]), X>0)</span></p></div>
+    <div class="item"><span class="name">asserta / assertz</span><span class="type">assertz(+Clause)</span><p class="desc">Agrega regla a DB (inicio/fin). <span class="ex">Ej: assertz(padre(a, b))</span></p></div>
+    <div class="item"><span class="name">retract(all)</span><span class="type">retract(+Clause)</span><p class="desc">Borra reglas de DB. <span class="ex">Ej: retract(padre(X, Y))</span></p></div>
+    <div class="item"><span class="name">listing</span><span class="type">listing(+Pred)</span><p class="desc">Muestra el código en memoria. <span class="ex">Ej: listing(append/3)</span></p></div>
+    <div class="item"><span class="name">limit</span><span class="type">limit(+Count, :Goal)</span><p class="desc">Cota soluciones. <span class="ex">Ej: limit(2, member(X, [1,2,3]))</span></p></div>
+    <div class="item"><span class="name">help</span><span class="type">help(+Topic)</span><p class="desc">Abre manual. <span class="ex">Ej: help(append)</span></p></div>
+
+    <h2>Smalltalk</h2>
+    <div class="note">Metaprogramación e iteradores. Colecciones suelen ser mutables.</div>
+    <div class="item"><span class="name">select: / reject:</span><span class="type">aBlock</span><p class="desc">Filtra / Descarta elementos. <span class="ex">Ej: #(1 2 3) select: [:x | x odd]</span></p></div>
+    <div class="item"><span class="name">collect:</span><span class="type">aBlock</span><p class="desc">Equivalente a map. <span class="ex">Ej: #(1 2) collect: [:x | x * 2]</span></p></div>
+    <div class="item"><span class="name">detect: [ifNone:]</span><span class="type">aBlock</span><p class="desc">Primer match. <span class="ex">Ej: #(1 2) detect: [:x | x > 1]</span></p></div>
+    <div class="item"><span class="name">inject:into:</span><span class="type">init into: aBlock</span><p class="desc">Equivalente a foldl. <span class="ex">Ej: #(1 2) inject: 0 into: [:a :e | a+e]</span></p></div>
+    <div class="item"><span class="name">fold:</span><span class="type">aBlock</span><p class="desc">Equivalente a foldl1. <span class="ex">Ej: #(1 2) fold: [:a :e | a+e]</span></p></div>
+    <div class="item"><span class="name">add:</span><span class="type">anObject</span><p class="desc">Agrega (mutante). <span class="ex">Ej: anOrderedCollection add: 5</span></p></div>
+    <div class="item"><span class="name">at: / at:put:</span><span class="type">index / index put: obj</span><p class="desc">Acceso / Modif. <span class="ex">Ej: aDict at: 'k' put: 42</span></p></div>
+    <div class="item"><span class="name">do:</span><span class="type">aBlock</span><p class="desc">Itera para efectos (foreach). <span class="ex">Ej: aList do: [:x | x print]</span></p></div>
+    <div class="item"><span class="name">keysAndValuesDo:</span><span class="type">aBlock</span><p class="desc">Itera Dict. <span class="ex">Ej: aDict keysAndValuesDo: [:k :v | ]</span></p></div>
+    <div class="item"><span class="name">keysDo:/valuesAndCountsDo:</span><span class="type">aBlock</span><p class="desc">Bag/Dict keys y frecs. <span class="ex">Ej: aBag valuesAndCountsDo: [:v :c | ]</span></p></div>
+    <div class="item"><span class="name">withAll:</span><span class="type">aCollection</span><p class="desc">Mensaje de clase instanciador. <span class="ex">Ej: Set withAll: #(1 1 2)</span></p></div>
+    <div class="item"><span class="name">includes: / includesKey:</span><span class="type">obj / key</span><p class="desc">¿Contiene valor/clave? <span class="ex">Ej: #(1) includes: 1</span></p></div>
+    <div class="item"><span class="name">Object / Behavior / Class</span><span class="type">-</span><p class="desc">Clases core (metaprogramación). <span class="ex">Ej: Object class</span></p></div>
+    <div class="item"><span class="name">Message / MessageSend</span><span class="type">-</span><p class="desc">Reificación de mensaje. <span class="ex">Ej: Message selector: #printString</span></p></div>
+    <div class="item"><span class="name">Method / Context</span><span class="type">-</span><p class="desc">Pila de ejecución. <span class="ex">Ej: thisContext sender</span></p></div>
+    <div class="item"><span class="name">doesNotUnderstand:</span><span class="type">aMessage</span><p class="desc">Hook cuando falla lookup. <span class="ex">Ej: Proxy lo atrapa.</span></p></div>
+    <div class="item"><span class="name">compile:</span><span class="type">aString</span><p class="desc">Compila en runtime. <span class="ex">Ej: MyClass compile: 'foo ^ 42'</span></p></div>
+    <div class="item"><span class="name">perform: [with:]</span><span class="type">aSymbol</span><p class="desc">Envía msj dinámicamente. <span class="ex">Ej: 5 perform: #+ with: 3</span></p></div>
+    <div class="item"><span class="name">respondsTo:</span><span class="type">aSymbol</span><p class="desc">¿Entiende el mensaje? <span class="ex">Ej: 5 respondsTo: #+</span></p></div>
+    <div class="item"><span class="name">sendTo:</span><span class="type">anObject</span><p class="desc">Ejecuta MessageSend. <span class="ex">Ej: aMessageSend sendTo: 5</span></p></div>
+    <div class="item"><span class="name">value:</span><span class="type">anArg</span><p class="desc">Evalúa un bloque. <span class="ex">Ej: [:x | x*2] value: 3</span></p></div>
+    <div class="item"><span class="name">class / species</span><span class="type">-</span><p class="desc">Clase / Clase para copias. <span class="ex">Ej: #(1) class -> Array</span></p></div>
+    <div class="item"><span class="name">superclass(es)</span><span class="type">-</span><p class="desc">Jerarquía. <span class="ex">Ej: SmallInteger superclass</span></p></div>
+    <div class="item"><span class="name">isKindOf:</span><span class="type">aClass</span><p class="desc">¿Es instancia de clase/superclase? <span class="ex">Ej: 5 isKindOf: Number</span></p></div>
+    <div class="item"><span class="name">subclass:instanceVariableNames...</span><span class="type">-</span><p class="desc">Crear clases (DNU Pharo). <span class="ex">Ej: Object subclass: #MyClass</span></p></div>
+    <div class="item"><span class="name">allSubclasses(Do:)</span><span class="type">aBlock</span><p class="desc">Toda la rama. <span class="ex">Ej: Number allSubclasses</span></p></div>
+    <div class="item"><span class="name">withAllSubclassesDo:</span><span class="type">aBlock</span><p class="desc">Incluye receptora. <span class="ex">Ej: Number withAllSubclassesDo:</span></p></div>
+    <div class="item"><span class="name">methodDictionary</span><span class="type">-</span><p class="desc">Dict selector -> CompiledMethod. <span class="ex">Ej: MyClass methodDictionary</span></p></div>
+
+  </div>
+</body>
+</html>

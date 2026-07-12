@@ -210,3 +210,16 @@ esListaDeA(_, []).
 esListaDeA(A, [X|XS]) :-
     member(X, A),
     esListaDeA(A, XS).
+
+% Segundo parcial del 2do cuatrimestre de 2025
+nota(do).
+nota(re).
+nota(mi).
+nota(fa).
+nota(sol).
+nota(la).
+nota(si).
+
+% melodia(-M)
+melodia(N) :- nota(N).
+melodia(sec(M1, M2)) :- melodia(M1), melodia(M2).
