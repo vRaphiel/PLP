@@ -1,0 +1,46 @@
+Nota: I
+
+Corrigió: Joni
+General
+
+    Como comentario general, no pasan los tests porque se cuelga en [21/29] nonograma:deducirVariasPasadas. Y también se cuelga con los tests "secretos". Deberían poder implementar una solución lo suficientemente eficiente que pase todos los tests.
+
+Ejercicio 4: pintadasValidas/1
+
+    Usen unificación nativa en vez de C = F y Celdas = Fila.
+    La 2da y 3er regla de armarFila/3 se pisan entre sí. Además hay código repetido y es un poco díficil de seguir. Intenten simplificar la solución por favor. No hace falta resolver aparte el caso de una única restricción. Si el caso base pinta de blanco todas las celdas restantes de la lista, entonces basta con que el caso recursivo solo pruebe todas las posibles formas de pintar blancos y luego replicar los negros para la restricción que está en la cabeza.
+
+Ejercicio 5: resolverNaive/1
+
+    Podrían haber aprovechado los metapredicados (maplist).
+
+Ejercicio 6: pintarObligatorias/1
+
+    La solución es demasiado compleja y muy poco declarativa. Si aprovechan la unificación nativa no tendrían que hacer tantos chequeos de si las filas son o no son de cierta forma, simplemente si no unifica entonces falla. Intenten usar el mecanismo de unificación y backtracking de prolog para construir una solución más idiomática. El predicado combinarCelda/3 que viene dado debería ser central en la resolución de pintarObligatorias/1.
+    Vengan a consultar y lo charlamos. Les voy a pedir que me expliquen lo que hicieron así que vengan preparadxs.
+
+Ejercicio 7: deducir1Pasada/1
+
+    Cuál es la diferencia entre las 2 reglas de aplicarATodas/1? Están haciendo muchas cosas de más que ya se resuelven con los predicados anteriores.
+    Usen unificación nativa en vez de R = r(_, C).
+
+Ejercicio 9: resolverDeduciendo/2
+
+    Está mal usado el cut. La idea es cortar antes.
+
+Ejercicio 10: solucionUnica/1
+
+    Ya hay un ejercicio que se llama resolverDeduciendo/2. ¿Para qué implementaron generarSoluciones/1?
+    Simplifiquen el código y reutilizan los predicados que ya tienen.
+    Esta solución también es muy vueltera, no necesitan reconstruir/3 nada.
+
+Ejercicio 11: Análisis de nonogramas
+
+    No entregado.
+
+Ejercicio 12: Reversibilidad
+
+    Mejorar redacción.
+    La idea está pero mezclan un poco los argumentos:
+        "length(L,N) es reversible, aun con 'L' y 'N' sin definir nos genera todas las listas de tamaño 'N' ..." Esto no es del todo cierto. Las listas que se generan son todas las listas de tamaño N pero sin instanciar sus elementos. Decir que genera todas las listas de tamaño N es mucho más fuerte.
+        "Ahora, para sonTodosDeL(X, L), sabemos que para 'N' definido va a generar 'L' de tamaño 'N' con todas 'X' ..." sonTodosDeL no usa N. No explicaron la verdadera razón por la cual este predicado funciona correctamente.

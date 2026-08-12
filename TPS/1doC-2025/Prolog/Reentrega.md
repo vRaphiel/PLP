@@ -1,0 +1,1 @@
+La reentrega de su TP está excelente. Aplicaron todos los cambios, y además la justificación de reversibilidad de sublista está clarísima; ahora sí usaron perfectamente los ejemplos, y se nota que entendieron muy bien el funcionamiento.

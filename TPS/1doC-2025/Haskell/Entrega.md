@@ -1,0 +1,17 @@
+Corregí su TP. La mayor parte del código está muy bien; es claro y fácil de leer, y sigue las buenas prácticas del paradigma. Además, los tests están excelentes y plantean muy bien los casos. Sin embargo, hay algunos errores en la demostración y el código de mostrar indica que falta reforzar esquemas de recursión, por lo que su nota es I+ y tendrán que reentregar los ejercicios 11 y 12.
+Cosas que sí o sí tienen que corregir para la reentrega:
+    mostrar debería implementarse con recrExpr, no con foldExpr. foldExpr los obliga a usar tuplas para acceder a las subestructuras, lo cual por un lado es más complicado de leer y por otro resulta en código repetido que es más difícil de refactorizar. Si usan el esquema de recursión correcto, pueden:
+        Pasar directamente show como función para el caso Const, en vez de definir una lambda en la que arman la tupla.
+        Usar constructor para saber qué subestructura les llegó, en vez de devolver CEConst, CESuma, etc. como segunda componente de la tupla y replicar el funcionamiento de constructor.
+    mostrar tiene mucho código repetido en los casos recursivos. Podrían usar where o let … in para definir una función auxiliar que abstraiga lo que hacen estas cuatro funciones. Usando el esquema de recursión correcto, no debería ser muy complicada. Las listas que plantearon en parenSuma, parenResta, etc. son una buena idea, y probablemente les sirvan para esta otra función.
+    Es redundante decir que S Z = S Z se cumple “por igualdad”, y que “como ambos lados son iguales, por igualdad el predicado es verdadero”. Justamente llegaron a que dos cosas son iguales. Las frases repiten lo que dicen las ecuaciones, y la idea de la demostración es razonar formalmente con las ecuaciones.
+    En los casos Const y Rango de la demostración, S Z = S (Z) = S Z = S Z está de más; los paréntesis en S (Z) no hacen falta, y no es necesario igualar algo con eso mismo pero con paréntesis.
+    Las ecuaciones ({L1}, {L2}, etc) deberían usarse para igualar una expresión con otra, no para pasar de una igualdad a otra.
+    Cuando usan la hipótesis inductiva, dicen “por HI sobre e1, e2”. Este es el error más serio de la demostración: la HI no es un predicado que toma parámetros (*), sino algo que asumen que vale para algunos elementos en particular ya fijos (en este caso justamente e1 y e2). Como la HI (que está bien planteada al principio del caso recursivo) es P(e1) ∧ P(e2), alcanza con decir que suma (S (cantOp e1)) (S (cantOp e2)) = suma (cantLit e1) (cantLit e2) por HI.
+(*) La única situación en la que puede tener sentido plantear una HI y después decir que vale para algún subconjunto particular de elementos es con inducción global, que no es lo que estamos haciendo en este caso.
+Detalles que no es estrictamente necesario corregir, pero igualmente está bueno tener en cuenta:
+    Revisen la redacción y las tildes en la demostración y en los comentarios.
+    Las funciones lambda en eval pueden escribirse simplemente como operarAvanzandoGen (+), operarAvanzandoGen (-), etc.
+    Dado que indiceCasillero sólo se usa en agregar, pueden definirla en un where.
+    Pueden hacer una eta-reducción del parámetro xs en histograma.
+    Pueden hacer una eta-reducción del parámetro genInicial en evalHistograma.

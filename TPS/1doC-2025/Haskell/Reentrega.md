@@ -1,0 +1,1 @@
+La reentrega de su TP está muy bien; las funciones que tenían problemas en la entrega anterior ahora sí siguen las buenas prácticas del paradigma y son mucho más claras, y también corrigieron perfectamente los errores en la demostración
