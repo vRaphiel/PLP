@@ -17,7 +17,9 @@ tieneLongitud(N, Fila) :- length(Fila, N).
 % tamaño(+Matriz, -Filas, -Columnas)
 % Precondición: esMatriz(Matriz)
 tamaño([], 0, 0).
-tamaño([X| Xs], Filas, Columnas) :- length([X | Xs], Filas), length(X, Columnas), maplist(tieneLongitud(N), Xs).
+tamaño([X | Xs], Filas, Columnas) :- 
+    length([X | Xs], Filas), 
+    length(X, Columnas).
 
 % ----------------
 % Ejercicio 3
@@ -25,7 +27,14 @@ tamaño([X| Xs], Filas, Columnas) :- length([X | Xs], Filas), length(X, Columnas
 
 % coordenadaEnRango(+Matriz, +Coordenada)
 % Precondición: esMatriz(Matriz)
-coordenadaEnRango(_, _) :- completar("Ejercicio 3").
+coordenadaEnRango(M, (PosX, PosY)) :- tamaño(M, Filas, Columnas), between(1, Filas, PosX), between(1, Columnas, PosY).
+
+% ¿Es este predicado reversible en alguno de sus argumentos? Justifique
+% En el argumento Coordenada (?Coordenada): Es reversible. Si Coordenada entra sin instanciar (PosX, PosY), como Filas y Columnas están instanciados gracias a tamaño/3, 
+% los predicados between(1, Filas, PosX) y between(1, Columnas, PosY) actúan como generadores finitos e instancian una a una todas las coordenadas válidas de la matriz.
+
+% En el argumento Matriz (+Matriz): No es reversible. Si Matriz entra libre, tamaño(M, Filas, Columnas) no puede deducir la matriz y la precondición esMatriz(Matriz) 
+% exige que esté instanciada.
 
 % ----------------
 % Observadores de tablero.
@@ -66,7 +75,38 @@ color(T, Color, Coordenada) :-
 
 % tableroConPosiciónLiberada(+Tablero, +Coordenada, -TableroLiberado)
 % Precondición: esMatriz(Tablero), coordenadaEnRango(Tablero, Coordenada), not(libre(Tablero, Coordenada)).
-tableroConPosiciónLiberada(_, _, _) :- completar("Ejercicio 4.a").
+tableroConPosiciónLiberada(T, Coordenada, TL) :- armarTLPorFilas(T, Coordenada, 1, TL).
+
+% armarTLPorFilas(+Filas, +Coordenada, +IndexFila, -FilasLiberadas)
+armarTLPorFilas([], _, _, []).
+armarTLPorFilas([Fila | Filas], (PosX, PosY), PosX, [FilaModificada | FilasModificadas]) :-
+    reemplazarEnLista(Fila, PosY, libre, FilaModificada),
+    SiguientePos is PosX + 1,
+    armarTLPorFilas(Filas, (PosX, PosY), SiguientePos, FilasModificadas).
+
+armarTLPorFilas([Fila | Filas], (PosX, PosY), Index, [Fila | FilasModificadas]) :-
+    Index \= PosX,
+    SiguientePos is Index + 1,
+    armarTLPorFilas(Filas, (PosX, PosY), SiguientePos, FilasModificadas).
+
+reemplazarEnLista([_ | Xs], 1, Nuevo, [Nuevo | Xs]).
+reemplazarEnLista([X | Xs], I, Nuevo, [X | Ys]) :-
+    I > 1,
+    I_ant is I - 1,
+    reemplazarEnLista(Xs, I_ant, Nuevo, Ys).
+
+% Mas declarativo
+% tableroConPosiciónLiberada(Tablero, (I, J), TableroLiberado) :-
+%    nth1(I, Tablero, FilaVieja),
+%    reemplazarEnLista(FilaVieja, J, libre, FilaNueva),
+%    reemplazarEnLista(Tablero, I, FilaNueva, TableroLiberado).
+
+% reemplazarEnLista(+ListaOriginal, +Indice, +ElementoNuevo, -ListaModificada)
+% reemplazarEnLista([_ | Xs], 1, Nuevo, [Nuevo | Xs]).
+% reemplazarEnLista([X | Xs], I, Nuevo, [X | Ys]) :-
+%     I > 1,
+%     I_ant is I - 1,
+%     reemplazarEnLista(Xs, I_ant, Nuevo, Ys).
 
 % ----------------
 % Ejercicio 4.b)
@@ -75,7 +115,10 @@ tableroConPosiciónLiberada(_, _, _) :- completar("Ejercicio 4.a").
 % tableroConPosicionesLiberadas(+Tablero, +Posiciones, -TableroLiberado)
 % Precondición: esMatriz(Tablero).
 % Precondición: para cada Coordenada en Posiciones: coordenadaEnRango(Tablero, Coordenada), not(libre(Tablero, Coordenada)).
-tableroConPosicionesLiberadas(_, _, _) :- completar("Ejercicio 4.b").
+tableroConPosicionesLiberadas(Tablero, [], Tablero).
+tableroConPosicionesLiberadas(Tablero, [Pos | PosXS], TableroLiberado) :- 
+  tableroConPosiciónLiberada(Tablero, Pos, TableroConPosLibre), 
+  tableroConPosicionesLiberadas(TableroConPosLibre, PosXS, TableroLiberado).
 
 % ----------------
 % Operaciones sobre coordenadas.
@@ -212,7 +255,10 @@ jugadaPosible(T, (I, J)) :-
 
 % jugarPosición(+TableroInicial, +Coordenada, -TableroResultante)
 % Precondición: esMatriz(TableroInicial), coordenadaEnRango(TableroInicial, Coordenada), libre(TableroInicial, Coordenada).
-jugarPosición(_, _, _) :- completar("Ejercicio 5.a").
+jugarPosición(TableroInicial, Coordenada, TableroResultante) :- 
+  jugadaPosible(TableroInicial, Coordenada),
+  coloresPredominantes(TableroInicial, Coordenada, _, Coordenadas),
+  tableroConPosicionesLiberadas(TableroInicial, Coordenadas, TableroResultante).
 
 % ----------------
 % Ejercicio 5.b)
@@ -221,7 +267,10 @@ jugarPosición(_, _, _) :- completar("Ejercicio 5.a").
 % jugarPosiciones(+TableroInicial, +Jugadas, -TableroResultante)
 % Precondición: esMatriz(TableroInicial).
 % Precondición: para cada Coordenada en Jugadas: coordenadaEnRango(TableroInicial, Coordenada).
-jugarPosiciones(_, _, _) :- completar("Ejercicio 5.b").
+jugarPosiciones(Tablero, [], Tablero).
+jugarPosiciones(TableroInicial, [X | Xs], TableroResultante) :- 
+  jugarPosición(TableroInicial, X, TableroIntermedio), 
+  jugarPosiciones(TableroIntermedio, Xsm TableroResultante).
 
 % jugarNaive(+TableroInicial, -TableroFinal)
 % Precondición: esMatriz(TableroInicial).
