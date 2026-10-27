@@ -270,7 +270,7 @@ jugarPosición(TableroInicial, Coordenada, TableroResultante) :-
 jugarPosiciones(Tablero, [], Tablero).
 jugarPosiciones(TableroInicial, [X | Xs], TableroResultante) :- 
   jugarPosición(TableroInicial, X, TableroIntermedio), 
-  jugarPosiciones(TableroIntermedio, Xsm TableroResultante).
+  jugarPosiciones(TableroIntermedio, Xs, TableroResultante).
 
 % jugarNaive(+TableroInicial, -TableroFinal)
 % Precondición: esMatriz(TableroInicial).
